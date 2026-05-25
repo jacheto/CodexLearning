@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Electric Daisy Carnival — Details</title>
+    <style>body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto;background:#0b0710;color:#f7eef0;padding:20px}.wrap{max-width:900px;margin:0 auto}a{color:#ff8fab}.card{background:linear-gradient(180deg,#1f0f14,#2a0d12);padding:20px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}.meta{color:#caa8b0}.count{color:#ff6b7f;font-weight:700}</style>
+  </head>
+  <body>
+    <div class="wrap">
+      <p><a href="../index.html">← Back</a></p>
+      <div class="card">
+        <h1>Electric Daisy Carnival</h1>
+        <p class="meta">Las Vegas, USA • North America</p>
+        <p>🗓️ <strong>May 15, 2026</strong></p>
+        <p>🎛️ EDM</p>
+        <p class="count">⏱️ <span id="cd"></span></p>
+        <hr style="border:none;border-top:1px solid rgba(255,255,255,0.03);margin:18px 0">
+        <p>One of the largest EDM festivals in North America. Add travel and ticket tips.</p>
+      </div>
+    </div>
+    <script>function countdown(dateString){const diff=new Date(dateString)-new Date();const d=Math.floor(diff/(1000*60*60*24));const el=document.getElementById('cd');if(d<0)el.textContent='Already happened';else if(d===0)el.textContent='Today';else el.textContent=d+(d===1?' day left':' days left');}countdown('2026-05-15');</script>
+  </body>
+</html>
