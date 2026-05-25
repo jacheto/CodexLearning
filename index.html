@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Global Electronic Shows — MVP</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #140507;
+      --card: #2a0d12;
+      --muted: #f1b8c1;
+      --text: #f3f4f6;
+      --accent: #ff4d6d;
+      --accent-2: #ff8fab;
+      --chip: #3a1119;
+      --ok: #ff758f;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: radial-gradient(circle at top, #3a0f17, var(--bg) 60%);
+      color: var(--text);
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      line-height: 1.4;
+    }
+    .container { max-width: 1100px; margin: 0 auto; padding: 24px; }
+    h1 { margin: 0; font-size: clamp(1.8rem, 3.5vw, 2.6rem); }
+    .subtitle { color: var(--muted); margin-top: 8px; }
+    .toolbar {
+      margin: 22px 0;
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    }
+    select, input {
+      width: 100%; padding: 10px 12px; border-radius: 10px;
+      border: 1px solid #7f1d2d; background: #22080d; color: var(--text);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 14px;
+    }
+    .card {
+      background: linear-gradient(180deg, #4a111b, var(--card));
+      border: 1px solid #7f1d2d;
+      border-radius: 14px;
+      padding: 14px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.25);
+    }
+    .chip {
+      display: inline-block;
+      background: var(--chip);
+      border: 1px solid #374151;
+      color: #ffe4e6;
+      border-radius: 999px;
+      padding: 2px 10px;
+      font-size: .78rem;
+      margin-bottom: 8px;
+    }
+    .title { font-size: 1.08rem; font-weight: 700; }
+    .meta { color: #ffd1d9; font-size: .92rem; margin-top: 6px; }
+    .countdown { margin-top: 10px; font-weight: 700; color: var(--ok); }
+    .empty { color: var(--muted); padding: 20px 6px; }
+    a { color: var(--accent); }
+    .footer { margin-top: 26px; color: var(--muted); font-size: .87rem; }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <h1>🌍 Next Electronic Shows</h1>
+    <p class="subtitle">MVP aggregator for upcoming electronic music festivals and events around the world.</p>
+
+    <section class="toolbar">
+      <select id="regionFilter">
+        <option value="all">All regions</option>
+      </select>
+      <select id="monthFilter">
+        <option value="all">Any month</option>
+      </select>
+      <input id="search" placeholder="Search by city, country, or show name" />
+    </section>
+
+    <section id="results" class="grid"></section>
+    <p id="empty" class="empty" hidden>No shows match your filters yet.</p>
+
+    <p class="footer">Data source for MVP: curated seed list (replace with Ticketmaster/Resident Advisor/Eventbrite APIs in v2).</p>
+  </main>
+
+  <script>
+    const shows = [
+      { name: 'Awakenings Summer Festival', city: 'Hilvarenbeek', country: 'Netherlands', region: 'Europe', date: '2026-07-10', genre: 'Techno' },
+      { name: 'Tomorrowland Weekend 1', city: 'Boom', country: 'Belgium', region: 'Europe', date: '2026-07-17', genre: 'EDM' },
+      { name: 'Sónar Barcelona', city: 'Barcelona', country: 'Spain', region: 'Europe', date: '2026-06-18', genre: 'Experimental / Electronica' },
+      { name: 'Ultra Europe', city: 'Split', country: 'Croatia', region: 'Europe', date: '2026-07-10', genre: 'EDM' },
+      { name: 'Movement Detroit', city: 'Detroit', country: 'USA', region: 'North America', date: '2026-05-30', genre: 'Techno / House' },
+      { name: 'ARC Music Festival', city: 'Chicago', country: 'USA', region: 'North America', date: '2026-09-04', genre: 'House / Techno' },
+      { name: 'Electric Daisy Carnival', city: 'Las Vegas', country: 'USA', region: 'North America', date: '2026-05-15', genre: 'EDM' },
+      { name: 'Mutek Montréal', city: 'Montreal', country: 'Canada', region: 'North America', date: '2026-08-20', genre: 'Electronic / Digital Arts' },
+      { name: 'Ultra Japan', city: 'Tokyo', country: 'Japan', region: 'Asia', date: '2026-09-19', genre: 'EDM' },
+      { name: 'Sunburn Festival', city: 'Goa', country: 'India', region: 'Asia', date: '2026-12-27', genre: 'EDM' },
+      { name: 'S2O Songkran Festival', city: 'Bangkok', country: 'Thailand', region: 'Asia', date: '2026-04-13', genre: 'EDM' },
+      { name: 'Rainbow Disco Club', city: 'Chiba', country: 'Japan', region: 'Asia', date: '2026-04-24', genre: 'House / Disco' },
+      { name: 'Road to Ultra Taiwan', city: 'Kaohsiung', country: 'Taiwan', region: 'Asia', date: '2026-11-14', genre: 'EDM' },
+      { name: 'Ultra South Africa', city: 'Johannesburg', country: 'South Africa', region: 'Africa', date: '2026-03-07', genre: 'EDM' },
+      { name: 'Cape Town Electronic Weekender', city: 'Cape Town', country: 'South Africa', region: 'Africa', date: '2026-10-03', genre: 'House' },
+      { name: 'DGTL São Paulo', city: 'São Paulo', country: 'Brazil', region: 'South America', date: '2026-11-07', genre: 'Techno / House' },
+      { name: 'Time Warp Argentina', city: 'Buenos Aires', country: 'Argentina', region: 'South America', date: '2026-04-18', genre: 'Techno' },
+      { name: 'Pitch Music & Arts', city: 'Moyston', country: 'Australia', region: 'Oceania', date: '2026-03-06', genre: 'House / Techno' },
+      { name: 'Listen Out', city: 'Sydney', country: 'Australia', region: 'Oceania', date: '2026-09-26', genre: 'Electronic / Hip-Hop' },
+    ];
+
+    const now = new Date();
+    const upcoming = shows.filter(s => new Date(s.date) >= now).sort((a,b)=> new Date(a.date)-new Date(b.date));
+
+    const regionFilter = document.getElementById('regionFilter');
+    const monthFilter = document.getElementById('monthFilter');
+    const searchInput = document.getElementById('search');
+    const results = document.getElementById('results');
+    const empty = document.getElementById('empty');
+
+    [...new Set(upcoming.map(s => s.region))].forEach(r => {
+      const option = document.createElement('option'); option.value = r; option.textContent = r; regionFilter.append(option);
+    });
+    [...new Set(upcoming.map(s => new Date(s.date).toLocaleString('en-US', { month: 'long' })))].forEach(m => {
+      const option = document.createElement('option'); option.value = m; option.textContent = m; monthFilter.append(option);
+    });
+
+    function countdown(dateString) {
+      const diff = new Date(dateString) - new Date();
+      const d = Math.floor(diff / (1000*60*60*24));
+      if (d < 0) return 'Already happened';
+      if (d === 0) return 'Today';
+      return `${d} day${d === 1 ? '' : 's'} left`;
+    }
+
+    function render() {
+      const region = regionFilter.value;
+      const month = monthFilter.value;
+      const q = searchInput.value.toLowerCase().trim();
+
+      const filtered = upcoming.filter(s => {
+        const monthName = new Date(s.date).toLocaleString('en-US', { month: 'long' });
+        const text = `${s.name} ${s.city} ${s.country}`.toLowerCase();
+        return (region === 'all' || s.region === region)
+          && (month === 'all' || monthName === month)
+          && (!q || text.includes(q));
+      });
+
+      results.innerHTML = filtered.map(s => `
+        <article class="card">
+          <span class="chip">${s.region}</span>
+          <div class="title">${s.name}</div>
+          <div class="meta">📍 ${s.city}, ${s.country}</div>
+          <div class="meta">🗓️ ${new Date(s.date).toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' })}</div>
+          <div class="meta">🎛️ ${s.genre}</div>
+          <div class="countdown">⏱️ ${countdown(s.date)}</div>
+        </article>
+      `).join('');
+
+      empty.hidden = filtered.length !== 0;
+    }
+
+    [regionFilter, monthFilter].forEach(el => el.addEventListener('change', render));
+    searchInput.addEventListener('input', render);
+    render();
+  </script>
+</body>
+</html>
